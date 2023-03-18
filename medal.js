@@ -1,4 +1,5 @@
 !function() {
+    var path = location.pathname.split('/');
     var cookies = document.cookie.split(';');
     var csrf = '';
 
@@ -11,9 +12,15 @@
         }
     }
 
-    if (csrf) {
-        var path = location.pathname.split('/');
+    var updateMedal = null;
 
+    chrome.runtime.onMessage.addListener(_ => {
+        if (updateMedal) {
+            updateMedal();
+        }
+    });
+
+    if (path[path.length - 1] && !isNaN(path[path.length - 1]) && csrf) {
         fetch('https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id=' + path[path.length - 1], {mode: 'cors', credentials: 'include'})
             .then(resp => {return resp.json()})
             .then(resp => {
@@ -23,26 +30,32 @@
                         .then(resp => {
                             if (resp.code === 0) {
                                 if (resp.data.my_fans_medal.medal_id) {
-                                    fetch('https://api.live.bilibili.com/xlive/web-room/v1/fansMedal/wear', {
-                                        mode: 'cors',
-                                        credentials: 'include',
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/x-www-form-urlencoded'
-                                        },
-                                        body: 'medal_id=' + resp.data.my_fans_medal.medal_id + '&csrf_token=' + csrf + '&csrf=' + csrf + '&visit_id='
-                                    });
+                                    updateMedal = function() {
+                                        fetch('https://api.live.bilibili.com/xlive/web-room/v1/fansMedal/wear', {
+                                            mode: 'cors',
+                                            credentials: 'include',
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                            },
+                                            body: 'medal_id=' + resp.data.my_fans_medal.medal_id + '&csrf_token=' + csrf + '&csrf=' + csrf + '&visit_id='
+                                        });
+                                    };
                                 } else {
-                                    fetch('https://api.live.bilibili.com/xlive/web-room/v1/fansMedal/take_off', {
-                                        mode: 'cors',
-                                        credentials: 'include',
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/x-www-form-urlencoded'
-                                        },
-                                        body: 'csrf_token=' + csrf + '&csrf=' + csrf + '&visit_id='
-                                    });
+                                    updateMedal = function() {
+                                        fetch('https://api.live.bilibili.com/xlive/web-room/v1/fansMedal/take_off', {
+                                            mode: 'cors',
+                                            credentials: 'include',
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                            },
+                                            body: 'csrf_token=' + csrf + '&csrf=' + csrf + '&visit_id='
+                                        });
+                                    };
                                 }
+
+                                updateMedal();
                             }
                         });
                 }

@@ -1,7 +1,10 @@
 {
-    "name": "Bilibili hide live entering",
+    "name": "BiliDDHelper",
     "version": "2023",
     "manifest_version": 3,
+    "background": {
+        "service_worker": "bg.js"
+    },
     "content_scripts": [
         {
             "matches": [
@@ -24,7 +27,8 @@
     },
     "permissions": [
         "declarativeNetRequest",
-        "declarativeNetRequestFeedback"
+        "declarativeNetRequestFeedback",
+        "tabs"
     ],
     "host_permissions": [
         "*://*/*"
