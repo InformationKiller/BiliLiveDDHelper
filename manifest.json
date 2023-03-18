@@ -1,0 +1,42 @@
+{
+    "name": "Bilibili hide live entering",
+    "version": "2023",
+    "manifest_version": 3,
+    "content_scripts": [
+        {
+            "matches": [
+                "https://live.bilibili.com/*"
+            ],
+            "js": [
+                "inject.js"
+            ],
+            "run_at": "document_start"
+        }
+    ],
+    "declarative_net_request": {
+        "rule_resources": [
+            {
+                "id": "ruleset",
+                "enabled": true,
+                "path": "rules.json"
+            }
+        ]
+    },
+    "permissions": [
+        "declarativeNetRequest",
+        "declarativeNetRequestFeedback"
+    ],
+    "host_permissions": [
+        "*://*/*"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "medal.js"
+            ],
+            "matches": [
+                "https://live.bilibili.com/*"
+            ]
+        }
+    ]
+}

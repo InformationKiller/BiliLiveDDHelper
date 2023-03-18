@@ -1,0 +1,15 @@
+[
+    {
+        "id": 1,
+        "priority": 1,
+        "condition": {
+            "regexFilter": "^https://api\\.live\\.bilibili\\.com/xlive/web-room/v1/index/getInfoByUser(.*)not_mock_enter_effect=0(.*)$"
+        },
+        "action": {
+            "type": "redirect",
+            "redirect": {
+                "regexSubstitution": "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByUser\\1not_mock_enter_effect=1\\2"
+            }
+        }
+    }
+]
